@@ -11,7 +11,7 @@ async function handler(req, res) {
       id: 1,
       name: "employee"
     },{
-      id: 1,
+      id: 2,
       name: "employee_detail"
     }];
     res.status(201).json({
