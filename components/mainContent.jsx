@@ -4,6 +4,7 @@ import { Button, Container } from "react-bootstrap";
 import Select from "./select";
 import MultiSelect from "./multiSelect";
 import Switch from "./switch";
+import WhereChild from "./whereChild";
 
 const MainContent = () => {
   const [selectTableValue, setSelectTableValue] = useState("");
@@ -28,6 +29,7 @@ const MainContent = () => {
           onChange={setSelectTableValue}
           placeholder="Select"
         />
+
         <div className={styles.selectFieldWrap}>
           Select{" "}
           <MultiSelect
@@ -38,12 +40,14 @@ const MainContent = () => {
           />{" "}
           from <span className={styles.tableName}>{selectTableValue}</span>
         </div>
+
         <div className={styles.whereWrap}>
           <Switch
             label="Include where condition"
             checked={includeWhere}
             onChange={setIncludeWhere}
           />
+          <WhereChild />
         </div>
       </div>
     </Container>
