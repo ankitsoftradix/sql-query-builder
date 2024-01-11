@@ -8,7 +8,7 @@ const Select = ({ label, optionsList, value, onChange, placeholder }) => {
       <Form.Select
         aria-label="Default select example"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={onChange}
       >
         <option key="blankChoice" hidden value>
           {placeholder}

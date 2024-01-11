@@ -77,7 +77,19 @@ const MainContent = () => {
 
   //** Where condition states start */
   const [includeWhere, setIncludeWhere] = useState(false);
-  const [whereDataList, setWhereDataList] = useState([]);
+  const [whereDataList, setWhereDataList] = useState([
+    {
+      data: "",
+      operator: "",
+      condition_value: "",
+    },
+  ]);
+  useEffect(() => {
+    console.log("whereDataList ==> ", whereDataList);
+  }, [whereDataList]);
+  useEffect(() => {
+    console.log("fieldsOptionsList ==> ", fieldsOptionsList);
+  }, [fieldsOptionsList]);
   //** Where condition states end */
 
   return (
@@ -87,7 +99,9 @@ const MainContent = () => {
           label="Table name"
           optionsList={tableList}
           value={selectTableValue}
-          onChange={setSelectTableValue}
+          onChange={(e) => {
+            setSelectTableValue(e.target.value);
+          }}
           placeholder="Select"
         />
 
@@ -111,7 +125,28 @@ const MainContent = () => {
             checked={includeWhere}
             onChange={setIncludeWhere}
           />
-          {includeWhere && <WhereChild />}
+          {includeWhere &&
+            whereDataList.map((item, index) => (
+              <WhereChild
+                key={index}
+                fieldList={fieldsOptionsList.map((item, index) => ({
+                  ...item,
+                  id: index + 1,
+                }))}
+                item={item}
+                setFieldChange={(e) => {
+                  const newDataList = [...whereDataList];
+                  newDataList[index].data = Number(e.target.value);
+                  newDataList[index].operator = "";
+                  setWhereDataList([...newDataList]);
+                }}
+                setOperatorChange={(e) => {
+                  const newDataList = [...whereDataList];
+                  newDataList[index].operator = Number(e.target.value);
+                  setWhereDataList([...newDataList]);
+                }}
+              />
+            ))}
         </div>
 
         <Button
