@@ -4,7 +4,7 @@ import { Form } from "react-bootstrap";
 const Select = ({ label, optionsList, value, onChange, placeholder }) => {
   return (
     <Form.Group controlId="formBasicSelect">
-      <Form.Label>{label}</Form.Label>
+      {label && <Form.Label>{label}</Form.Label>}
       <Form.Select
         aria-label="Default select example"
         value={value}
