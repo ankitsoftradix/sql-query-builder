@@ -1,0 +1,21 @@
+.mainWrap {
+  padding: 3rem;
+}
+
+.selectFieldWrap {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  .tableName {
+    font-weight: bold;
+  }
+}
+
+.whereWrap {
+  margin-top: 1rem;
+  .mainTitle {
+    font-size: 18px;
+    font-weight: bold;
+  }
+}
