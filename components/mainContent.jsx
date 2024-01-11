@@ -16,6 +16,7 @@ const MainContent = () => {
   const fieldsOptionList = ["C++", "Java", "ReactJS", "Spring Boot"];
 
   const [fieldsItem, setFieldsItem] = useState([]);
+  const [includeWhere, setIncludeWhere] = useState(false);
 
   return (
     <Container>
@@ -38,7 +39,11 @@ const MainContent = () => {
           from <span className={styles.tableName}>{selectTableValue}</span>
         </div>
         <div className={styles.whereWrap}>
-          <Switch label="Include where condition" />
+          <Switch
+            label="Include where condition"
+            checked={includeWhere}
+            onChange={setIncludeWhere}
+          />
         </div>
       </div>
     </Container>
