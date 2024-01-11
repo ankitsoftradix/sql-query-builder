@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/MainContent.module.css";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, Table } from "react-bootstrap";
 import Select from "./select";
 import MultiSelect from "./multiSelect";
 import Switch from "./switch";
@@ -48,6 +48,7 @@ const MainContent = () => {
   /** Field states end */
 
   /** Execute query states start */
+  const [results, setResults] = useState([]);
   const operatorList = [
     { id: 1, name: "<" },
     { id: 2, name: ">" },
@@ -65,6 +66,21 @@ const MainContent = () => {
 
   useEffect(() => {
     if (executeQueryResponse?.status) {
+      const finalData = [];
+      const title = [];
+      for (let [key, value] of Object.entries(executeQueryResponse?.data[0])) {
+        title.push(key);
+      }
+      finalData.push(title);
+      executeQueryResponse?.data.forEach((element) => {
+        const dummyData = [];
+        for (let [key, value] of Object.entries(element)) {
+          dummyData.push(value);
+        }
+        finalData.push(dummyData);
+      });
+      setResults(finalData);
+
       toast.success(executeQueryResponse.message);
     }
   }, [executeQueryResponse]);
@@ -109,6 +125,10 @@ const MainContent = () => {
     console.log("fieldsOptionsList ==> ", fieldsOptionsList);
   }, [fieldsOptionsList]);
   //** Where condition states end */
+
+  useEffect(() => {
+    console.log("results ==> ", results);
+  }, [results]);
 
   return (
     <Container>
@@ -208,6 +228,36 @@ const MainContent = () => {
         >
           Submit
         </Button>
+        {results.length ? (
+          <div className={styles.tableWrap}>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  {results[0]?.map((item, index) => (
+                    <th key={index}>{item}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {results?.map((item, index) =>
+                  index === 0 ? (
+                    <></>
+                  ) : (
+                    <tr key={index}>
+                      <td>{index}</td>
+                      {item.map((innerItem, innerIndex) => (
+                        <td key={innerIndex + index}>{innerItem}</td>
+                      ))}
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </Table>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </Container>
   );
