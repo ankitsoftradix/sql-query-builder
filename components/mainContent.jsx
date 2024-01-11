@@ -7,6 +7,7 @@ import MultiSelect from "./multiSelect";
 import Switch from "./switch";
 import WhereChild from "./whereChild";
 import useFetch from "@/hooks/usefetch";
+import { toast } from "react-toastify";
 
 const MainContent = () => {
   /** Table states start */
@@ -46,6 +47,34 @@ const MainContent = () => {
   }, [selectTableValue]);
   /** Field states end */
 
+  /** Execute query states start */
+  const [
+    executeQueryApi,
+    { response: executeQueryResponse, error: executeQueryError },
+  ] = useFetch("/query", {
+    method: "post",
+  });
+
+  useEffect(() => {
+    if (executeQueryResponse?.status) {
+      toast.success(executeQueryResponse.message);
+    }
+  }, [executeQueryResponse]);
+  useEffect(() => {
+    if (executeQueryError) {
+      toast.error(executeQueryError.message);
+    }
+  }, [executeQueryError]);
+
+  const handleSubmit = () => {
+    const data = {
+      table: tableList.find((item) => item.id == selectTableValue)?.name,
+      field: fieldsItem.map((item) => item.name).toString(),
+    };
+    executeQueryApi(data);
+  };
+  /** Execute query states end */
+
   const [includeWhere, setIncludeWhere] = useState(false);
 
   return (
@@ -79,8 +108,16 @@ const MainContent = () => {
             checked={includeWhere}
             onChange={setIncludeWhere}
           />
-          <WhereChild />
+          {includeWhere && <WhereChild />}
         </div>
+
+        <Button
+          variant="primary"
+          className={styles.submitBtn}
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
       </div>
     </Container>
   );
