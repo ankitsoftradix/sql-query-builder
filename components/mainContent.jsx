@@ -48,6 +48,14 @@ const MainContent = () => {
   /** Field states end */
 
   /** Execute query states start */
+  const operatorList = [
+    { id: 1, name: "<" },
+    { id: 2, name: ">" },
+    { id: 3, name: "<=" },
+    { id: 4, name: ">=" },
+    { id: 5, name: "=" },
+    { id: 6, name: "!=" },
+  ];
   const [
     executeQueryApi,
     { response: executeQueryResponse, error: executeQueryError },
@@ -70,6 +78,15 @@ const MainContent = () => {
     const data = {
       table: tableList.find((item) => item.id == selectTableValue)?.name,
       field: fieldsItem.map((item) => item.name).toString(),
+      is_where: includeWhere ? 1 : 0,
+      is_condition: includeWhere
+        ? whereDataList.map((item, index) => ({
+            condition_type: index === 0 ? "" : "AND",
+            operator: operatorList[item.operator - 1]?.name || "",
+            condition_field: fieldsOptionsList[item.data - 1]?.name || "",
+            condition_value: item.condition_value,
+          }))
+        : [],
     };
     executeQueryApi(data);
   };
@@ -82,6 +99,7 @@ const MainContent = () => {
       data: "",
       operator: "",
       condition_value: "",
+      condition_type: "",
     },
   ]);
   useEffect(() => {
@@ -95,15 +113,17 @@ const MainContent = () => {
   return (
     <Container>
       <div className={styles.mainWrap}>
-        <Select
-          label="Table name"
-          optionsList={tableList}
-          value={selectTableValue}
-          onChange={(e) => {
-            setSelectTableValue(e.target.value);
-          }}
-          placeholder="Select"
-        />
+        <div className={styles.tableNameField}>
+          <Select
+            label="Table name"
+            optionsList={tableList}
+            value={selectTableValue}
+            onChange={(e) => {
+              setSelectTableValue(e.target.value);
+            }}
+            placeholder="Select"
+          />
+        </div>
 
         <div className={styles.selectFieldWrap}>
           Select{" "}
@@ -133,7 +153,11 @@ const MainContent = () => {
                   ...item,
                   id: index + 1,
                 }))}
-                item={item}
+                item={{
+                  ...item,
+                  index: index,
+                  listLength: whereDataList.length,
+                }}
                 setFieldChange={(e) => {
                   const newDataList = [...whereDataList];
                   newDataList[index].data = Number(e.target.value);
@@ -149,6 +173,29 @@ const MainContent = () => {
                   const newDataList = [...whereDataList];
                   newDataList[index].condition_value = e.target.value;
                   setWhereDataList([...newDataList]);
+                }}
+                handleConditionBtn={(e) => {
+                  const newDataList = [...whereDataList];
+                  newDataList[index].condition_type = e;
+                  setWhereDataList([...newDataList]);
+                }}
+                handlePlusClick={() =>
+                  setWhereDataList([
+                    ...whereDataList,
+                    {
+                      data: "",
+                      operator: "",
+                      condition_value: "",
+                      condition_type: "AND",
+                    },
+                  ])
+                }
+                handleCrossClick={() => {
+                  setWhereDataList(
+                    whereDataList.filter(
+                      (item, innerIndex) => innerIndex !== index
+                    )
+                  );
                 }}
               />
             ))}

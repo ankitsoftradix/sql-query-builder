@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/whereChilde.module.css";
 import Select from "./select";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, ToggleButton } from "react-bootstrap";
 
 const WhereChild = ({
   item,
@@ -9,6 +9,9 @@ const WhereChild = ({
   setFieldChange,
   setOperatorChange,
   setValueChange,
+  handlePlusClick,
+  handleCrossClick,
+  handleConditionBtn,
 }) => {
   const [operatorList, setOperatorList] = useState([]);
 
@@ -26,48 +29,75 @@ const WhereChild = ({
         ]);
       } else if (dataType === "integer") {
         setOperatorList([
-          { id: 0, name: "<" },
-          { id: 1, name: ">" },
-          { id: 2, name: "<=" },
-          { id: 3, name: ">=" },
+          { id: 1, name: "<" },
+          { id: 2, name: ">" },
+          { id: 3, name: "<=" },
+          { id: 4, name: ">=" },
         ]);
       } else if (dataType === "varchar") {
         setOperatorList([
-          { id: 4, name: "=" },
-          { id: 5, name: "!=" },
+          { id: 5, name: "=" },
+          { id: 6, name: "!=" },
         ]);
       }
     }
   }, [item.data]);
 
   return (
-    <div className={styles.whereChildWrap}>
-      Where{" "}
-      <Select
-        optionsList={fieldList}
-        value={item.data}
-        onChange={setFieldChange}
-        placeholder="Select field"
-      />
-      <Select
-        optionsList={operatorList}
-        value={item.operator}
-        onChange={setOperatorChange}
-        placeholder="Select operator"
-      />
-      <div className={styles.valueWrap}>
-        <Form.Control
-          placeholder="value"
-          value={item.condition_value}
-          onChange={setValueChange}
-          type={
-            item.data === 1 || item.data === 4 || item.data === 5
-              ? "number"
-              : "text"
-          }
+    <div className={styles.mainWrap}>
+      {item.index !== 0 && (
+        <div className={styles.btnWrap}>
+          {" "}
+          <Button
+            variant={item.condition_type === "AND" ? "primary" : "secondary"}
+            onClick={() => handleConditionBtn("AND")}
+          >
+            AND
+          </Button>
+          <Button
+            variant={item.condition_type === "OR" ? "primary" : "secondary"}
+            onClick={() => handleConditionBtn("OR")}
+          >
+            OR
+          </Button>
+          <Button variant="danger" onClick={handleCrossClick}>
+            ⨯
+          </Button>
+        </div>
+      )}
+
+      <div className={styles.whereChildWrap}>
+        Where{" "}
+        <Select
+          optionsList={fieldList}
+          value={item.data}
+          onChange={setFieldChange}
+          placeholder="Select field"
         />
+        <Select
+          optionsList={operatorList}
+          value={item.operator}
+          onChange={setOperatorChange}
+          placeholder="Select operator"
+        />
+        <div className={styles.valueWrap}>
+          <Form.Control
+            placeholder="value"
+            value={item.condition_value}
+            onChange={setValueChange}
+            type={
+              item.data === 1 || item.data === 4 || item.data === 5
+                ? "number"
+                : "text"
+            }
+          />
+        </div>
+        {item.index === item.listLength - 1 && (
+          <Button variant="success" onClick={handlePlusClick}>
+            +
+          </Button>
+        )}
       </div>
-      <Button variant="success">+</Button>
     </div>
   );
 };
