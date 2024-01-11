@@ -2,6 +2,17 @@ import nextConnect from 'next-connect';
 import middleware from '../../../middleware/database'; // Import the database middleware
 import pool from '../../../config/db'; // Import the database connection
 import bodyParser from 'body-parser';
+import Cors from 'cors'; // Import the cors middleware
+
+import initMiddleware from '../../../lib/init-middleware'; // Create a separate file to initialize middleware
+// Initialize the Cors middleware
+const cors = initMiddleware(
+  Cors({
+    origin: '*',
+    methods: ['GET', 'HEAD', 'POST'], // Add the HTTP methods you want to allow
+  })
+);
+
 
 // Function to handle POST requests
 async function handler(req, res) {
@@ -78,5 +89,11 @@ async function handler(req, res) {
     });
   }
 }
+
+// handler.use(cors({
+//   origin: '*', // Specify the allowed origin
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true, // Enable credentials (cookies, authorization headers, etc.)
+// }));
 
 export default handler;
