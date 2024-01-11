@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/whereChilde.module.css";
 import Select from "./select";
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 
-const WhereChild = ({ item, fieldList, setFieldChange, setOperatorChange }) => {
+const WhereChild = ({
+  item,
+  fieldList,
+  setFieldChange,
+  setOperatorChange,
+  setValueChange,
+}) => {
   const [operatorList, setOperatorList] = useState([]);
 
   useEffect(() => {
@@ -49,6 +55,18 @@ const WhereChild = ({ item, fieldList, setFieldChange, setOperatorChange }) => {
         onChange={setOperatorChange}
         placeholder="Select operator"
       />
+      <div className={styles.valueWrap}>
+        <Form.Control
+          placeholder="value"
+          value={item.condition_value}
+          onChange={setValueChange}
+          type={
+            item.data === 1 || item.data === 4 || item.data === 5
+              ? "number"
+              : "text"
+          }
+        />
+      </div>
       <Button variant="success">+</Button>
     </div>
   );

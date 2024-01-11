@@ -145,6 +145,11 @@ const MainContent = () => {
                   newDataList[index].operator = Number(e.target.value);
                   setWhereDataList([...newDataList]);
                 }}
+                setValueChange={(e) => {
+                  const newDataList = [...whereDataList];
+                  newDataList[index].condition_value = e.target.value;
+                  setWhereDataList([...newDataList]);
+                }}
               />
             ))}
         </div>
