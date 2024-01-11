@@ -75,7 +75,10 @@ const MainContent = () => {
   };
   /** Execute query states end */
 
+  //** Where condition states start */
   const [includeWhere, setIncludeWhere] = useState(false);
+  const [whereDataList, setWhereDataList] = useState([]);
+  //** Where condition states end */
 
   return (
     <Container>
