@@ -15,7 +15,7 @@ const MultiSelect = ({
     }
   };
   return (
-    <Dropdown autoClose={"outside"} data-bs-theme="dark">
+    <Dropdown autoClose={"outside"} data-bs-theme="light">
       <Dropdown.Toggle id="dropdown-autoclose-false" variant="secondary">
         {placeHolder}
       </Dropdown.Toggle>
@@ -26,7 +26,7 @@ const MultiSelect = ({
             onClick={() => toggleLang(option)}
             active={selectedItems.includes(option)}
           >
-            {option}
+            {option.name}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>

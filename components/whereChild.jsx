@@ -5,9 +5,9 @@ import { Button } from "react-bootstrap";
 
 const WhereChild = () => {
   const optionsList = [
-    { title: "Cup", value: 1 },
-    { title: "Bottle", value: 2 },
-    { title: "Chair", value: 3 },
+    { name: "Cup", id: 1 },
+    { name: "Bottle", id: 2 },
+    { name: "Chair", id: 3 },
   ];
   const [selectTableValue, setSelectTableValue] = useState("");
   return (

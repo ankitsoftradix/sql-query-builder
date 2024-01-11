@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/MainContent.module.css";
 import { Button, Container } from "react-bootstrap";
@@ -8,40 +9,51 @@ import WhereChild from "./whereChild";
 import useFetch from "@/hooks/usefetch";
 
 const MainContent = () => {
+  /** Table states start */
   const [selectTableValue, setSelectTableValue] = useState("");
   const [tableList, setTableList] = useState([]);
-  const [getTableList, { tableResponse, tableLoading }] = useFetch("/tables", {
-    method: "post",
-  });
+  const [getTableList, { response: tableResponse }] = useFetch("/tables");
 
-  const optionsList = [
-    { title: "Cup", value: 1 },
-    { title: "Bottle", value: 2 },
-    { title: "Chair", value: 3 },
-  ];
-  const fieldsOptionList = ["C++", "Java", "ReactJS", "Spring Boot"];
-
-  const [fieldsItem, setFieldsItem] = useState([]);
-  const [includeWhere, setIncludeWhere] = useState(false);
-
+  useEffect(() => {
+    if (tableResponse?.status) {
+      setTableList(tableResponse.data);
+    }
+  }, [tableResponse]);
   useEffect(() => {
     getTableList();
   }, []);
+  /** Table states end */
+
+  /** Field states start */
+  const [fieldsItem, setFieldsItem] = useState([]);
+  const [fieldsOptionsList, setFieldsOptionsList] = useState([]);
+  const [getFieldsOptionsList, { response: fieldsOptionsResponse }] = useFetch(
+    "/table_fields",
+    {
+      method: "post",
+    }
+  );
 
   useEffect(() => {
-    console.log("tableResponse ==> ", tableResponse);
-  }, [tableResponse]);
-
+    if (fieldsOptionsResponse?.status) {
+      setFieldsOptionsList(fieldsOptionsResponse.data);
+    }
+  }, [fieldsOptionsResponse]);
   useEffect(() => {
-    console.log("tableLoading ==> ", tableLoading);
-  }, [tableLoading]);
+    if (selectTableValue) {
+      getFieldsOptionsList({ table_id: selectTableValue });
+    }
+  }, [selectTableValue]);
+  /** Field states end */
+
+  const [includeWhere, setIncludeWhere] = useState(false);
 
   return (
     <Container>
       <div className={styles.mainWrap}>
         <Select
           label="Table name"
-          optionsList={optionsList}
+          optionsList={tableList}
           value={selectTableValue}
           onChange={setSelectTableValue}
           placeholder="Select"
@@ -52,10 +64,13 @@ const MainContent = () => {
           <MultiSelect
             selectedItems={fieldsItem}
             setSelectedItems={setFieldsItem}
-            optionList={fieldsOptionList}
+            optionList={fieldsOptionsList}
             placeHolder="Fields"
           />{" "}
-          from <span className={styles.tableName}>{selectTableValue}</span>
+          from{" "}
+          <span className={styles.tableName}>
+            {tableList.find((item) => item.id == selectTableValue)?.name}
+          </span>
         </div>
 
         <div className={styles.whereWrap}>

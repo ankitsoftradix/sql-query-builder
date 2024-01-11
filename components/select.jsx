@@ -14,8 +14,8 @@ const Select = ({ label, optionsList, value, onChange, placeholder }) => {
           {placeholder}
         </option>
         {optionsList.map((item, index) => (
-          <option key={index} value={item.value}>
-            {item.title}
+          <option key={index} value={item.id}>
+            {item.name}
           </option>
         ))}
       </Form.Select>

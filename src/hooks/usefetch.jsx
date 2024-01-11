@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const useFetch = (url, config) => {
   const [response, setResponse] = useState(undefined);
@@ -7,8 +7,9 @@ const useFetch = (url, config) => {
   const [error, setError] = useState(undefined);
   const [errorMessage, setErrorMessage] = useState("");
   const instance = axios.create({
-    baseURL: "https://71dc-61-247-230-182.ngrok-free.app/api/",
+    baseURL: "http://localhost:3000/api/",
   });
+
   const loadQuery = async (data, rest) => {
     const headers = {
       "Content-Type": "application/json",
