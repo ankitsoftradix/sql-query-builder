@@ -66,8 +66,17 @@ const MainContent = () => {
 
   useEffect(() => {
     if (executeQueryResponse?.status) {
+      if (!executeQueryResponse?.data[0]) {
+        setResults([]);
+        toast.error("No records found");
+        return;
+      }
       const finalData = [];
       const title = [];
+      console.log(
+        executeQueryResponse?.data[0],
+        "executeQueryResponse?.data[0]"
+      );
       for (let [key, value] of Object.entries(executeQueryResponse?.data[0])) {
         title.push(key);
       }
@@ -118,17 +127,7 @@ const MainContent = () => {
       condition_type: "",
     },
   ]);
-  useEffect(() => {
-    console.log("whereDataList ==> ", whereDataList);
-  }, [whereDataList]);
-  useEffect(() => {
-    console.log("fieldsOptionsList ==> ", fieldsOptionsList);
-  }, [fieldsOptionsList]);
   //** Where condition states end */
-
-  useEffect(() => {
-    console.log("results ==> ", results);
-  }, [results]);
 
   return (
     <Container>
