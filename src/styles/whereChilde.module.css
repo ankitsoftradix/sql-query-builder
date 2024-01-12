@@ -4,3 +4,8 @@
   gap: 0.5rem;
   display: flex;
 }
+.btnWrap {
+  margin-top: 2rem;
+  display: flex;
+  gap: 0.5rem;
+}
