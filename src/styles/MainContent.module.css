@@ -31,3 +31,12 @@
 .tableWrap {
   margin-top: 4rem;
 }
+
+.aggregationWrap {
+  margin-top: 1rem;
+  .innerWrap {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+}

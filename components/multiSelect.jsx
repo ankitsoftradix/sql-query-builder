@@ -6,6 +6,7 @@ const MultiSelect = ({
   setSelectedItems,
   optionList,
   placeHolder,
+  disabled,
 }) => {
   const toggleLang = (option) => {
     if (selectedItems.includes(option)) {
@@ -16,7 +17,11 @@ const MultiSelect = ({
   };
   return (
     <Dropdown autoClose={"outside"} data-bs-theme="light">
-      <Dropdown.Toggle id="dropdown-autoclose-false" variant="secondary">
+      <Dropdown.Toggle
+        id="dropdown-autoclose-false"
+        variant="secondary"
+        disabled={disabled}
+      >
         {placeHolder}
       </Dropdown.Toggle>
       <Dropdown.Menu>

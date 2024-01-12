@@ -73,10 +73,6 @@ const MainContent = () => {
       }
       const finalData = [];
       const title = [];
-      console.log(
-        executeQueryResponse?.data[0],
-        "executeQueryResponse?.data[0]"
-      );
       for (let [key, value] of Object.entries(executeQueryResponse?.data[0])) {
         title.push(key);
       }
@@ -102,7 +98,9 @@ const MainContent = () => {
   const handleSubmit = () => {
     const data = {
       table: tableList.find((item) => item.id == selectTableValue)?.name,
-      field: fieldsItem.map((item) => item.name).toString(),
+      field: includeAggregation
+        ? agFieldValue
+        : fieldsItem.map((item) => item.name).toString(),
       is_where: includeWhere ? 1 : 0,
       is_condition: includeWhere
         ? whereDataList.map((item, index) => ({
@@ -112,6 +110,9 @@ const MainContent = () => {
             condition_value: item.condition_value,
           }))
         : [],
+      aggregation: includeAggregation
+        ? aggregationList[Number(aggregationValue)].name
+        : "",
     };
     executeQueryApi(data);
   };
@@ -128,6 +129,38 @@ const MainContent = () => {
     },
   ]);
   //** Where condition states end */
+
+  /** Aggregation states start */
+  const [includeAggregation, setIncludeAggregation] = useState(false);
+  const aggregationList = [
+    { name: "SUM", id: 0 },
+    { name: "COUNT", id: 1 },
+    { name: "AVG", id: 2 },
+  ];
+  const [aggregationValue, setAggregationValue] = useState("");
+
+  const [agFieldValue, setAgFieldValue] = useState("");
+  const [agFieldsOptionsList, setAgFieldsOptionsList] = useState([]);
+  const [getAgFieldsOptionsList, { response: agFieldsOptionsResponse }] =
+    useFetch("/integer_table_fields", {
+      method: "post",
+    });
+
+  useEffect(() => {
+    if (agFieldsOptionsResponse?.status) {
+      setAgFieldsOptionsList(agFieldsOptionsResponse.data);
+    }
+  }, [agFieldsOptionsResponse]);
+  useEffect(() => {
+    if (selectTableValue && aggregationValue) {
+      getAgFieldsOptionsList({ table_id: selectTableValue });
+    }
+  }, [selectTableValue, aggregationValue]);
+  /** Aggregation states end */
+
+  useEffect(() => {
+    console.log("includeAggregation ==> ", includeAggregation);
+  }, [includeAggregation]);
 
   return (
     <Container>
@@ -151,6 +184,7 @@ const MainContent = () => {
             setSelectedItems={setFieldsItem}
             optionList={fieldsOptionsList}
             placeHolder="Fields"
+            disabled={includeAggregation}
           />{" "}
           from{" "}
           <span className={styles.tableName}>
@@ -218,6 +252,36 @@ const MainContent = () => {
                 }}
               />
             ))}
+        </div>
+
+        <div className={styles.aggregationWrap}>
+          <Switch
+            label="Include aggregation"
+            checked={includeAggregation}
+            onChange={setIncludeAggregation}
+          />
+          {includeAggregation && (
+            <div className={styles.innerWrap}>
+              <Select
+                optionsList={aggregationList}
+                value={aggregationValue}
+                onChange={(e) => {
+                  setAggregationValue(e.target.value);
+                }}
+                placeholder="Select type"
+              />{" "}
+              {(aggregationValue === "0" || aggregationValue === "2") && (
+                <Select
+                  optionsList={agFieldsOptionsList}
+                  value={agFieldValue}
+                  onChange={(e) => {
+                    setAgFieldValue(e.target.value);
+                  }}
+                  placeholder="Select fields"
+                />
+              )}
+            </div>
+          )}
         </div>
 
         <Button
