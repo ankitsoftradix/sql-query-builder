@@ -121,7 +121,7 @@ const MainContent = () => {
         ? whereDataList.map((item, index) => ({
             condition_type: index === 0 ? "" : "AND",
             operator: operatorList[item.operator - 1]?.name || "",
-            condition_field: fieldsOptionsList[item.data - 1]?.name || "",
+            condition_field: whereOptionsList[item.data - 1]?.name || "",
             condition_value: item.condition_value,
           }))
         : [],

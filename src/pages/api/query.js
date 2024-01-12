@@ -97,12 +97,27 @@ async function handler(req, res) {
       }
     }
 
-    if (req.body.is_where == 1) {
-      query += ` where`;
+    // if (req.body.is_where == 1) {
+    //   query += ` where`;
 
+    //   if (req.body.is_condition && req.body.is_condition.length > 0) {
+    //     for (let i in req.body.is_condition) {
+    //       query += ` ${
+    //         req.body.is_condition[i].condition_type
+    //           ? req.body.is_condition[i].condition_type
+    //           : ""
+    //       } ${req.body.is_condition[i].condition_field} ${
+    //         req.body.is_condition[i].operator
+    //       } '${req.body.is_condition[i].condition_value}'`;
+    //     }
+    //   }
+    // }
+    // console.log(query, "====query==");
+
+    if (req.body.is_where == 1 && req.body.is_join == 0) {
       if (req.body.is_condition && req.body.is_condition.length > 0) {
         for (let i in req.body.is_condition) {
-          query += ` ${
+          query += ` where ${
             req.body.is_condition[i].condition_type
               ? req.body.is_condition[i].condition_type
               : ""
@@ -112,7 +127,21 @@ async function handler(req, res) {
         }
       }
     }
-    console.log(query, "====query==");
+    console.log(query, "====query1==");
+    if (req.body.is_where == 1 && req.body.is_join == 1) {
+      if (req.body.is_condition && req.body.is_condition.length > 0) {
+        for (let i in req.body.is_condition) {
+          query += ` where ${
+            req.body.is_condition[i].condition_type
+              ? req.body.is_condition[i].condition_type
+              : ""
+          } ${req.body.table}.${req.body.is_condition[i].condition_field} ${
+            req.body.is_condition[i].operator
+          } '${req.body.is_condition[i].condition_value}'`;
+        }
+      }
+    }
+    console.log(query, "====query2==");
 
     const result = await pool.query(query);
     res.status(201).json({
