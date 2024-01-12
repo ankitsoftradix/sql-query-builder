@@ -45,54 +45,9 @@ async function handler(req, res) {
         query = `SELECT ${req.body.aggregation}(${req.body.field}) FROM ${req.body.table}`;
       }
     }
-    if (req.body.is_join == 1) {
-      req.body.is_where = 0;
-    }
-
-    if (req.body.is_where == 1) {
-      query += ` where`;
-      // if(!req.body.compare_field) {
-      //   res.status(400).json({
-      //     status: 0,
-      //     code:400,
-      //     message: 'Compare field is required!',
-      //     data: null
-      //   });
-      // }
-
-      // if(!req.body.operator) {
-      //   res.status(400).json({
-      //     status: 0,
-      //     code:400,
-      //     message: 'Operator is required!',
-      //     data: null
-      //   });
-      // }
-
-      // if(!req.body.value) {
-      //   res.status(400).json({
-      //     status: 0,
-      //     code:400,
-      //     message: 'Value is required!',
-      //     data: null
-      //   });
-      // }
-      // query += ` where ${req.body.compare_field} ${req.body.operator} '${req.body.value}'`
-
-      if (req.body.is_condition && req.body.is_condition.length > 0) {
-        for (let i in req.body.is_condition) {
-          query += ` ${
-            req.body.is_condition[i].condition_type
-              ? req.body.is_condition[i].condition_type
-              : ""
-          } ${req.body.is_condition[i].condition_field} ${
-            req.body.is_condition[i].operator
-          } '${req.body.is_condition[i].condition_value}'`;
-        }
-      }
-    }
-
-    console.log(query, "====query==");
+    // if (req.body.is_join == 1) {
+    //   req.body.is_where = 0;
+    // }
 
     if (req.body.is_join == 1) {
       if (!req.body.join_type) {
@@ -141,6 +96,23 @@ async function handler(req, res) {
         ON ${req.body.table}.${req.body.joined_table_1_field} = ${req.body.joined_table}.${req.body.joined_table_field};`;
       }
     }
+
+    if (req.body.is_where == 1) {
+      query += ` where`;
+
+      if (req.body.is_condition && req.body.is_condition.length > 0) {
+        for (let i in req.body.is_condition) {
+          query += ` ${
+            req.body.is_condition[i].condition_type
+              ? req.body.is_condition[i].condition_type
+              : ""
+          } ${req.body.is_condition[i].condition_field} ${
+            req.body.is_condition[i].operator
+          } '${req.body.is_condition[i].condition_value}'`;
+        }
+      }
+    }
+    console.log(query, "====query==");
 
     const result = await pool.query(query);
     res.status(201).json({

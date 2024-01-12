@@ -38,6 +38,7 @@ const MainContent = () => {
   useEffect(() => {
     if (fieldsOptionsResponse?.status) {
       setFieldsOptionsList(fieldsOptionsResponse.data);
+      setWhereOptionsList(fieldsOptionsResponse.data);
     }
   }, [fieldsOptionsResponse]);
   useEffect(() => {
@@ -47,6 +48,14 @@ const MainContent = () => {
       setFirstFieldValue("");
       setSecondFieldValue("");
       setSecondFieldsOptionsList([]);
+      setWhereDataList([
+        {
+          data: "",
+          operator: "",
+          condition_value: "",
+          condition_type: "",
+        },
+      ]);
     }
   }, [selectTableValue]);
   /** Field states end */
@@ -139,6 +148,7 @@ const MainContent = () => {
       condition_type: "",
     },
   ]);
+  const [whereOptionsList, setWhereOptionsList] = useState([]);
   //** Where condition states end */
 
   /** Aggregation states start */
@@ -194,6 +204,10 @@ const MainContent = () => {
   useEffect(() => {
     if (secondFieldsOptionsResponse?.status) {
       setSecondFieldsOptionsList(secondFieldsOptionsResponse.data);
+      setWhereOptionsList([
+        ...whereOptionsList,
+        ...secondFieldsOptionsResponse.data,
+      ]);
     }
   }, [secondFieldsOptionsResponse]);
   useEffect(() => {
@@ -243,7 +257,7 @@ const MainContent = () => {
             whereDataList.map((item, index) => (
               <WhereChild
                 key={index}
-                fieldList={fieldsOptionsList.map((item, index) => ({
+                fieldList={whereOptionsList.map((item, index) => ({
                   ...item,
                   id: index + 1,
                 }))}
