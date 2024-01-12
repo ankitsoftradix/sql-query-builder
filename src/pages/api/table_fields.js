@@ -66,10 +66,6 @@ async function handler(req, res) {
           name: "total_exp",
           data_type: "varchar",
         },
-        {
-          name: "joining_date",
-          data_type: "Date",
-        },
       ];
     }
 

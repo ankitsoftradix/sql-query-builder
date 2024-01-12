@@ -43,6 +43,10 @@ const MainContent = () => {
   useEffect(() => {
     if (selectTableValue) {
       getFieldsOptionsList({ table_id: selectTableValue });
+      setSecondTableValue("");
+      setFirstFieldValue("");
+      setSecondFieldValue("");
+      setSecondFieldsOptionsList([]);
     }
   }, [selectTableValue]);
   /** Field states end */
@@ -98,7 +102,9 @@ const MainContent = () => {
   const handleSubmit = () => {
     const data = {
       table: tableList.find((item) => item.id == selectTableValue)?.name,
-      field: includeAggregation
+      field: includeJoin
+        ? "*"
+        : includeAggregation
         ? agFieldValue
         : fieldsItem.map((item) => item.name).toString(),
       is_where: includeWhere ? 1 : 0,
@@ -113,6 +119,11 @@ const MainContent = () => {
       aggregation: includeAggregation
         ? aggregationList[Number(aggregationValue)].name
         : "",
+      is_join: includeJoin ? 1 : 0,
+      join_type: joinTypeList[Number(joinType)].name,
+      joined_table: tableList.find((item) => item.id == secondTableValue)?.name,
+      joined_table_1_field: firstFieldValue,
+      joined_table_field: secondFieldValue,
     };
     executeQueryApi(data);
   };
@@ -158,9 +169,39 @@ const MainContent = () => {
   }, [selectTableValue, aggregationValue]);
   /** Aggregation states end */
 
+  /** Join states start */
+  const [includeJoin, setIncludeJoin] = useState(false);
+
+  const joinTypeList = [
+    { name: "INNER JOIN", id: 0 },
+    { name: "LEFT JOIN", id: 1 },
+    { name: "RIGHT JOIN", id: 2 },
+    { name: "FULL JOIN", id: 3 },
+  ];
+  const [joinType, setJoinType] = useState("");
+  const [secondTableValue, setSecondTableValue] = useState("");
+  const [firstFieldValue, setFirstFieldValue] = useState("");
+  const [secondFieldValue, setSecondFieldValue] = useState("");
+
+  const [secondFieldsOptionsList, setSecondFieldsOptionsList] = useState([]);
+  const [
+    getSecondFieldsOptionsList,
+    { response: secondFieldsOptionsResponse },
+  ] = useFetch("/table_fields", {
+    method: "post",
+  });
+
   useEffect(() => {
-    console.log("includeAggregation ==> ", includeAggregation);
-  }, [includeAggregation]);
+    if (secondFieldsOptionsResponse?.status) {
+      setSecondFieldsOptionsList(secondFieldsOptionsResponse.data);
+    }
+  }, [secondFieldsOptionsResponse]);
+  useEffect(() => {
+    if (secondTableValue) {
+      getSecondFieldsOptionsList({ table_id: secondTableValue });
+    }
+  }, [secondTableValue]);
+  /** Join states end */
 
   return (
     <Container>
@@ -184,7 +225,7 @@ const MainContent = () => {
             setSelectedItems={setFieldsItem}
             optionList={fieldsOptionsList}
             placeHolder="Fields"
-            disabled={includeAggregation}
+            disabled={includeAggregation || includeJoin}
           />{" "}
           from{" "}
           <span className={styles.tableName}>
@@ -252,6 +293,54 @@ const MainContent = () => {
                 }}
               />
             ))}
+        </div>
+
+        <div className={styles.joinWrap}>
+          <Switch
+            label="Include join"
+            checked={includeJoin}
+            onChange={setIncludeJoin}
+          />
+          {includeJoin && (
+            <div className={styles.innerWrap}>
+              <Select
+                optionsList={joinTypeList}
+                value={joinType}
+                onChange={(e) => {
+                  setJoinType(e.target.value);
+                }}
+                placeholder="Join type"
+              />
+              <Select
+                optionsList={tableList.filter(
+                  (item) => item.id !== Number(selectTableValue)
+                )}
+                value={secondTableValue}
+                onChange={(e) => {
+                  setSecondTableValue(e.target.value);
+                }}
+                placeholder="Select table"
+              />
+              on
+              <Select
+                optionsList={fieldsOptionsList}
+                value={firstFieldValue}
+                onChange={(e) => {
+                  setFirstFieldValue(e.target.value);
+                }}
+                placeholder={`Table 1 field`}
+              />
+              =
+              <Select
+                optionsList={secondFieldsOptionsList}
+                value={secondFieldValue}
+                onChange={(e) => {
+                  setSecondFieldValue(e.target.value);
+                }}
+                placeholder={`Table 2 field`}
+              />
+            </div>
+          )}
         </div>
 
         <div className={styles.aggregationWrap}>

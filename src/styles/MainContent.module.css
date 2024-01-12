@@ -40,3 +40,13 @@
     margin-top: 1rem;
   }
 }
+
+.joinWrap {
+  margin-top: 1rem;
+  .innerWrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+}
